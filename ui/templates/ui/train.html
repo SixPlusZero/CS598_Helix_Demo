@@ -51,23 +51,23 @@
                 //console.log("Success");
                 //console.log(data);
                 job_status = JSON.parse(data);
-                document.getElementById("msgtrain").innerHTML = "State: " + job_status["status"] + ", " + "Progress: " + job_status["progress"];
+                var new_status = "<p>State: " + job_status["status"] + ", " + "Info: " + job_status["message"] + "</p>";
+                document.getElementById("msgtrain").innerHTML = new_status + document.getElementById("msgtrain").innerHTML;
             },
             error: function (jqXHR, textStatus, errorThrown){
-                alert("Failed")
+                job_status = {"status": "FAILURE"};
+                alert("Failed");
             }
         });
     }
     function queryProgress() {
         queryStatus();
-        console.log(job_status);
-        
         if (job_status["status"] == "SUCCESS") {
             return;
+        } else if (job_status["status"] == "FAILURE") {
+            return;
         } else {
-            console.log(job_status["status"]);
-            console.log("continue");
-            setTimeout("queryProgress();", 1000);
+            setTimeout("queryProgress();", 100);
         }
     }
     queryProgress();

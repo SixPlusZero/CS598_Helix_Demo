@@ -5,14 +5,16 @@ from helix_ui.celery import training_job
 def get_task_status(task_id):
     task = training_job.AsyncResult(task_id)
     status = task.status
-    progress = 0
-    if status == u'SUCCESS':
-        progress = 100
-    elif status == u'FAILURE':
-        progress = 0
+    msg = ""
+    print(task)
+    print(task.info)
+    if status == 'SUCCESS':
+        if task.info != None: msg = task.info['msg']
+    elif status == 'FAILURE':
+        if task.info != None: msg = task.info['msg']
     elif status == 'PROGRESS':
-        progress = task.info['progress']
-    return {'status': status, 'progress': progress}
+        if task.info != None: msg = task.info['msg']
+    return {'status': status, 'message' : msg}
 
 def get_task_msg(task_id):
     task = training_job.AsyncResult(task_id)

@@ -20,8 +20,6 @@ def train(request):
     mlcode = request.POST.get('mlcode')
     tid = training_job.apply_async(args=[mlcode])
     print("tid is %s" % (tid))
-    #task = training_job.AsyncResult(tid)
-    #print(tid.get(on_message=task.on_raw_message, propagate=False))
     context = {"task_id": tid.id}
     return render(request, 'ui/train.html', context)
 
