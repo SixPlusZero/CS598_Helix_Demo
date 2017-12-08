@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Helix</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+{% load static %}
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <ul class="navbar-nav">
+    <li class="nav-item active">
+      <a class="nav-link" href="../">Homepage</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="../editor">Editor</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">DAG</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled" href="#">Other</a>
+    </li>
+  </ul>
+</nav>
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4" id = "msgtrain"> Processing </div>
+    </div>
+
+</div>
+{% csrf_token %}
+<script type="text/javascript">
+    var job_status = {}
+
+    function queryStatus(){
+        var formData = "{{ task_id }}"; 
+        //console.log(formData);
+        $.ajax({
+            url : "../task/",
+            type: "POST",
+            dataType: "text",
+            data : {"csrfmiddlewaretoken": "{{ csrf_token }}", "task_id": formData},
+            success: function(data, textStatus, jqXHR){
+                //console.log("Success");
+                //console.log(data);
+                job_status = JSON.parse(data);
+                document.getElementById("msgtrain").innerHTML = "State: " + job_status["status"] + ", " + "Progress: " + job_status["progress"];
+            },
+            error: function (jqXHR, textStatus, errorThrown){
+                alert("Failed")
+            }
+        });
+    }
+    function queryProgress() {
+        queryStatus();
+        console.log(job_status);
+        
+        if (job_status["status"] == "SUCCESS") {
+            return;
+        } else {
+            console.log(job_status["status"]);
+            console.log("continue");
+            setTimeout("queryProgress();", 1000);
+        }
+    }
+    queryProgress();
+</script>
+
+</body>
+</html>

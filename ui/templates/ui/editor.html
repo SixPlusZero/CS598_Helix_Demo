@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Helix</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <ul class="navbar-nav">
+    <li class="nav-item active">
+      <a class="nav-link" href="../">Homepage</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Editor</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">DAG</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link disabled" href="#">Other</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="container">
+    <h2>Helix Workflow Editor</h2>
+    <p>You can write your Helix code here</p>    
+      <div class="form-group">
+        <form action="../train/" method="POST">
+          {% csrf_token %}
+          <label for="mlcode"></label>
+          <textarea class="form-control" rows="20" name="mlcode" id="mlcode"></textarea>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>  
+      </div>
+</div>
+
+</body>
+</html>
