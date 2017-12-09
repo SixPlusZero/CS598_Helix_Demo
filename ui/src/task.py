@@ -6,15 +6,15 @@ def get_task_status(task_id):
     task = training_job.AsyncResult(task_id)
     status = task.status
     msg = ""
-    print(task)
-    print(task.info)
+    stage = ""
     if status == 'SUCCESS':
-        if task.info != None: msg = task.info['msg']
+        msg = "Task finished."
     elif status == 'FAILURE':
-        if task.info != None: msg = task.info['msg']
+        msg = "Task failed."
     elif status == 'PROGRESS':
-        if task.info != None: msg = task.info['msg']
-    return {'status': status, 'message' : msg}
+        msg = task.info['msg']
+        stage = task.info['stage']
+    return {'status' : status, 'message' : msg, 'stage' : stage}
 
 def get_task_msg(task_id):
     task = training_job.AsyncResult(task_id)

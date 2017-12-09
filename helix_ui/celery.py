@@ -23,8 +23,16 @@ app.autodiscover_tasks()
 def training_job(self, code):
     stage = "submit"
     training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code submitted to server.'})
-    train.save_code(code)
+    wf = train.save_code(code)
+    print("workflow name is %s" % (wf))
     stage = "savecode"
     training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code saved to helix engine.'})
+    train.compile_code()
+    stage = "compilecode"
+    training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code compiled to helix engine.'})
+    train.run_code()
+    stage = "runcode"
+    training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code executed.'})
+
     training_job.update_state(state='SUCCESS', meta={'stage':stage, 'msg': 'Task completed.'})
 
