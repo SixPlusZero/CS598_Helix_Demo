@@ -19,16 +19,19 @@ def index(request):
     return render(request, 'ui/index.html', context)
 
 def editor(request):
+    print("entering editor")
     context = {}
+    if request.POST.get('mlcode') != None:
+        print("has code")
+        mlcode = request.POST.get('mlcode')
+        workflow = "CensusExample"
+        comment = "Example comment"
+        tid = training_job.apply_async(args=[workflow, mlcode, comment])
+        context["task_id"] = tid.id
+        print(context["task_id"])
+        context["mlcode"] = mlcode
     return render(request, 'ui/editor.html', context)
 
-def train(request):
-    mlcode = request.POST.get('mlcode')
-    workflow = "CensusExample"
-    comment = "empty comment"
-    tid = training_job.apply_async(args=[workflow, mlcode, comment])
-    context = {"task_id": tid.id}
-    return render(request, 'ui/train.html', context)
 
 def task_status(request):
     task_id = request.POST.get('task_id')
