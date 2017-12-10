@@ -1,0 +1,4 @@
+*.pyc
+helix_ui/*.pyc
+ui/*.pyc
+ui/src/*.pyc

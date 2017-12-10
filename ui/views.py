@@ -7,6 +7,7 @@ from django.template import loader
 from django.contrib import messages
 from helix_ui.celery import training_job
 from ui.src import task
+import json
 import ui.src.db as mdb
 # Create your views here.
 def index(request):
@@ -34,3 +35,8 @@ def task_status(request):
     res['stage'] = mres['stage']
     res['stage_message'] = mres['stage_message']
     return JsonResponse(res)
+
+def workflow_list(request):
+    res = json.dumps(mdb.get_workflow_list())
+    print(res)
+    return HttpResponse(res)

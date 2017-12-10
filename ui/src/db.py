@@ -30,16 +30,31 @@ def get_task_state(task_id):
 def new_workflow(workflow):
     client = MongoClient()
     db = client.helix
-    document = {
-        "workflow" : workflow,
-        "count" : 0
-    }
+    document = {"workflow" : workflow, "count" : 0}
     return db.workflows.insert_one(document).inserted_id
     
+def get_workflow_list():
+    client = MongoClient()
+    db = client.helix
+    res = db.workflows.find({}, {'workflow':1})
+    rlist = []
+    for w in res:
+        rlist.append(w['workflow'])
+    return rlist
+    
+
 def new_version(task_id):
     client = MongoClient()
     db = client.helix
-    document = db.runningtask.find_one({'task_id':task_id})
+    tmp_document = db.runningtask.find_one({'task_id':task_id})
+    print("debug")
+    document = {}
+    document["workflow"] = tmp_document["workflow"]
+    document["task_id"] = tmp_document["task_id"]
+    document["comment"] = tmp_document["comment"]
+    document["timestamp"] = tmp_document["timestamp"]
+    print(document)
+    document["code"] = tmp_document["code"]
     db.versions.insert_one(document)
     db.workflows.update_one({'workflow': document['workflow']}, {'$inc':{'count':1}})
     print(db.workflows.find_one({'workflow': document['workflow']}))

@@ -41,4 +41,5 @@ def training_job(self, workflow, code, comment):
     state = "SUCCESS"
     stage = "FINISH"
     mdb.update_task_state(task_id, state, stage, 'Task completed.')
+    mdb.new_version(task_id)
     mdb.get_task_state(task_id)

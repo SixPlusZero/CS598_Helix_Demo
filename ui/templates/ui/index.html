@@ -18,9 +18,7 @@
 
     </head>
     <body>
-
-
-
+        
         <div class="wrapper">
             <!-- Sidebar Holder -->
             <nav id="sidebar">
@@ -93,7 +91,10 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         <!-- jQuery Custom Scroller CDN -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
-
+        <script>
+            var CSRF_TOKEN = '{{ csrf_token }}';
+        </script>
+        <script src="{% static "index.js" %}"></script>
         <script type="text/javascript">
             $(document).ready(function () {
                 $("#sidebar").mCustomScrollbar({
@@ -106,6 +107,7 @@
                     $('a[aria-expanded=true]').attr('aria-expanded', 'false');
                 });
             });
+            setWorkflowTab();
         </script>
     </body>
 </html>
