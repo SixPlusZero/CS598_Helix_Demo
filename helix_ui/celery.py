@@ -3,7 +3,9 @@ import os
 from celery import Celery
 from django.contrib import messages
 import ui.src.train as train
+import ui.src.db as mdb
 import time
+import datetime
 
 # set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'helix_ui.settings')
@@ -20,19 +22,23 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 @app.task(bind=True)
-def training_job(self, code):
-    stage = "submit"
-    training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code submitted to server.'})
-    wf = train.save_code(code)
-    print("workflow name is %s" % (wf))
-    stage = "savecode"
-    training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code saved to helix engine.'})
+def training_job(self, workflow, code, comment):
+    task_id = training_job.request.id
+    mdb.new_task(task_id, workflow, datetime.datetime.utcnow(), comment, code)
+    state = "RUNNING"
+    stage = "SUBMIT"
+    mdb.update_task_state(task_id, state, stage, 'Code submitted to server.')
+    train.save_code(code)
+    stage = "SAVECODE"
+    mdb.update_task_state(task_id, state, stage, 'Code saved to helix engine.')
     train.compile_code()
-    stage = "compilecode"
-    training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code compiled to helix engine.'})
+    stage = "COMPILECODE"
+    mdb.update_task_state(task_id, state, stage, 'Code compiled to helix engine.')
+    mdb.get_task_state(task_id)
     train.run_code()
-    stage = "runcode"
-    training_job.update_state(state='PROGRESS', meta={'stage':stage, 'msg': 'Code executed.'})
-
-    training_job.update_state(state='SUCCESS', meta={'stage':stage, 'msg': 'Task completed.'})
-
+    stage = "RUNCODE"
+    mdb.update_task_state(task_id, state, stage, 'Code executed.')
+    state = "SUCCESS"
+    stage = "FINISH"
+    mdb.update_task_state(task_id, state, stage, 'Task completed.')
+    mdb.get_task_state(task_id)

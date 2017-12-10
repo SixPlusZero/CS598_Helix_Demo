@@ -13,10 +13,10 @@
 {% load static %}
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <ul class="navbar-nav">
-    <li class="nav-item active">
-      <a class="nav-link" href="../">Homepage</a>
-    </li>
     <li class="nav-item">
+      <a class="nav-link" href="../">Home</a>
+    </li>
+    <li class="nav-item active">
       <a class="nav-link" href="../editor">Editor</a>
     </li>
     <li class="nav-item">
@@ -51,9 +51,9 @@
             success: function(data, textStatus, jqXHR){
                 prev_status = job_status;
                 job_status = JSON.parse(data);
-                if (prev_status["status"] == job_status["status"] && prev_status["stage"] == job_status["stage"]) return;
+                if (prev_status["state"] == job_status["state"] && prev_status["stage"] == job_status["stage"]) return;
                 //if (prev_status == job_status) return;
-                var new_status = "<p>State: " + job_status["status"] + ", " + "Stage: " + job_status["stage"] + ", " + "Info: " + job_status["message"] + "</p>";
+                var new_status = "<p>State: " + job_status["state"] + ", " + "Stage: " + job_status["stage"] + ", " + "Info: " + job_status["stage_message"] + "</p>";
                 document.getElementById("msgtrain").innerHTML += new_status;
             },
             error: function (jqXHR, textStatus, errorThrown){

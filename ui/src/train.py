@@ -14,7 +14,7 @@ def compile_code():
     return 0
 
 def run_code():
-    cmd = "java -Xmx60000m -cp target/scala-2.11/smiley-assembly-0.1.jar com.smiley.datamodel.workflows.client.CensusExample"
+    cmd = "java -Xmx60000m -cp target/scala-2.11/smiley-assembly-0.1.jar com.smiley.datamodel.workflows.client.CensusExample > ./runningout.txt"
     ts_start = time.time()
     os.system("cd /Users/sixpluszero/work/gestalt; %s" % (cmd))
     ts_end = time.time()
