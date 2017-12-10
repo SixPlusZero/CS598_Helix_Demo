@@ -41,6 +41,19 @@ def get_workflow_list():
     for w in res:
         rlist.append(w['workflow'])
     return rlist
+
+def get_version_list(workflow):
+    client = MongoClient()
+    db = client.helix
+    res = db.versions.find({"workflow" : workflow}, {'workflow':1, 'timestamp':1, 'comment':1})
+    vlist = []
+    for w in res:
+        p = {}
+        p['workflow'] = w['workflow']
+        p['timestamp'] = (w['timestamp'] - datetime.datetime(1970,1,1)).total_seconds()
+        p['comment'] = w['comment']
+        vlist.append(p)
+    return vlist
     
 
 def new_version(task_id):

@@ -12,6 +12,10 @@ import ui.src.db as mdb
 # Create your views here.
 def index(request):
     context = {}
+    if request.GET.get('workflow') != None:
+        wf = request.GET.get('workflow')
+        vlist = mdb.get_version_list(wf)
+        context['vlist'] = vlist
     return render(request, 'ui/index.html', context)
 
 def editor(request):

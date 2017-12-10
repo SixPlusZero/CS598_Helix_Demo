@@ -10,7 +10,8 @@ function setWorkflowTab() {
             var arr = JSON.parse(data);
             var inHTML = "";
             for (i = 0; i < arr.length; i++) {
-                inHTML += '<li><a href="#">Workflow 1</a></li>';
+                console.log(arr[i]);
+                inHTML += '<li><a href="' + './?workflow=' + arr[i] + '">' + arr[i] + '</a></li>';
             }
             document.getElementById("pageSubmenu").innerHTML = inHTML;
         },
