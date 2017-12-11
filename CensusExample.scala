@@ -1,14 +1,3 @@
-package com.smiley.datamodel.workflows.client
-
-import com.smiley.datamodel.driver.Driver._
-import com.smiley.datamodel.example.Example
-import com.smiley.datamodel.feature.Extractor
-import com.smiley.datamodel.learner.{FeatureVectorLearner, Reducer}
-import com.smiley.datamodel.reader.source.SomeSource
-import com.smiley.datamodel.reader.{RowScanner, Scanner, Workflow}
-import org.apache.spark.rdd.RDD
-
-
 object CensusExample extends Workflow {
   val data = "data"
   val columns = Scanner.getColumnNamesFromFile("./input/test_header.txt")
@@ -200,14 +189,10 @@ object CensusExample extends Workflow {
     this.setProperty("data_loc", "input/all.data")
     this.setProperty("outputDir", "example_output")
     this.setProperty(pScale, "true")
-    //this.setProperty(pRowReuse, "true")
-    //this.setProperty(pIncomeReuse, "true")
-    //this.setProperty(plearnedReuse, "true")
     this.setProperty(pUseContinuous, "true")
     this.setProperty(pUseBucket, "true")
     this.setProperty(pUseCat, "true")
     this.setProperty(pUseInteract, "false")
-    //this.setProperty(pRetrain, "false")
     this.setProperty(MEASURE_MAP, "true")
     this.setProperty(pPredOutput, "true")
     driver_main(args)

@@ -16,7 +16,7 @@ function setWorkflowTab() {
                 console.log(arr[i]);
                 inHTML += '<li><a href="' + '/ui/?workflow=' + arr[i] + '">' + arr[i] + '</a></li>';
             }
-            document.getElementById("pageSubmenu").innerHTML = inHTML;
+            document.getElementById("pageSubmenu").innerHTML += inHTML;
         },
         error: function (jqXHR, textStatus, errorThrown){
             //alert("Failed");
@@ -24,6 +24,15 @@ function setWorkflowTab() {
         }
     });
 }
+
+function addKeyVal(){
+    
+    var w = parseInt(document.getElementById("paramcnt").value,10) + 1;
+    var newpair = '<div class="input-group"><input style="width:50% " class="form-control " placeholder="key"  name="key' + w + '" type="text" /><input style="width:50% " class="form-control " placeholder="value"  name="val' + w + '" type="text" /></div>';
+    document.getElementById("params").innerHTML += newpair;
+    document.getElementById("paramcnt").value = w;
+}
+
 function queryStatus(){
     var formData = task_id;
     console.log("debuging merge html");
@@ -37,7 +46,6 @@ function queryStatus(){
             prev_status = job_status;
             job_status = JSON.parse(data);
             if (prev_status["state"] == job_status["state"] && prev_status["stage"] == job_status["stage"]) return;
-            //if (prev_status == job_status) return;
             var new_status = "<p>State: " + job_status["state"] + ", " + "Stage: " + job_status["stage"] + ", " + "Info: " + job_status["stage_message"] + "</p>";
             document.getElementById("msgtrain").innerHTML += new_status;
         },
@@ -50,9 +58,9 @@ function queryStatus(){
 
 function queryProgress() {
     queryStatus();
-    if (job_status["status"] == "SUCCESS") {
+    if (job_status["state"] == "SUCCESS") {
         return;
-    } else if (job_status["status"] == "FAILURE") {
+    } else if (job_status["state"] == "FAILURE") {
         return;
     } else {
         setTimeout("queryProgress();", 1000);

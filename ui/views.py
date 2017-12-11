@@ -9,6 +9,7 @@ from helix_ui.celery import training_job
 from ui.src import task
 import json
 import ui.src.db as mdb
+import ui.src.util as util
 # Create your views here.
 def index(request):
     context = {}
@@ -21,17 +22,38 @@ def index(request):
 def editor(request):
     print("entering editor")
     context = {}
+    if request.GET.get('tid_code') != None:
+        d = mdb.get_code_by_task_id(request.GET.get('tid_code'))
+        context['mlcode'] = d['code']
+        context['workflow'] = d['workflow']
+        if 'params' in d:
+            context['params'] = d['params']
+            context['paramcnt'] = d['paramcnt']
+    if request.POST.get('newwfname') != None:
+        context['workflow'] = request.POST.get('newwfname')
+        context['mlcode'] = util.generate_template(request.POST.get('newwfname'))
     if request.POST.get('mlcode') != None:
         print("has code")
         mlcode = request.POST.get('mlcode')
-        workflow = "CensusExample"
+        paramcnt = int(request.POST.get('paramcnt'))
+        print "DEBUG GET PARAMCNT: ", paramcnt
+        params = {}
+        if (paramcnt != 0):
+            for i in range(paramcnt):
+                k = request.POST.get('key%d' % (i+1))
+                v = request.POST.get('val%d' % (i+1))
+                params[k] = v
+        print "DEBUG GET PARAMS: ", params
+        fillcode = util.code_fillup(mlcode)
+        workflow = request.POST.get('workflow')
         comment = "Example comment"
-        tid = training_job.apply_async(args=[workflow, mlcode, comment])
+        tid = training_job.apply_async(args=[workflow, mlcode, fillcode, params, comment])
         context["task_id"] = tid.id
+        context["params"] = params
+        context["paramcnt"] = paramcnt
         print(context["task_id"])
         context["mlcode"] = mlcode
     return render(request, 'ui/editor.html', context)
-
 
 def task_status(request):
     task_id = request.POST.get('task_id')

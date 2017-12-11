@@ -37,6 +37,7 @@
                     <li>    
                         <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false">Workflows</a>
                         <ul class="collapse list-unstyled" id="pageSubmenu">
+                          <li><a href="#WorkflowModal" data-toggle="modal">New Workflow</a></li>
                         </ul>
                     </li>
                     <li>
@@ -84,13 +85,48 @@
                   {% if vlist %}
                     {% for v in vlist %}
                       <div class="well well-lg">
-                        <p>{{v.timestamp}} {{v.workflow}}</p>
+                        <p>Workflow: {{v.workflow}}</p>
+                        <p>Annotation: {{v.comment}}</p> 
+                        <p>Submission time: {{v.timestamp}}</p> 
+                        <p>Runtime: {{v.runtime}}</p>
+                        <p>Accuracy: {{v.accuracy}}</p>
+                        <a href="#" class="btn btn-info" role="button" data-html="true" data-toggle="popover" title="Code"  data-trigger="focus" data-content="<pre><code>{{v.code}}</code></pre>">View Code</a>
+                        {% if v.params %}
+                        <a href="#" class="btn btn-info" role="button" data-html="true" data-toggle="popover" title="Params"  data-trigger="focus" data-content="{% for key, value in v.params.items %} <p> {{ key }}: {{ value }} </p>{% endfor %}">View Params</a>
+                        {% endif %}
+                        <a href="/ui/editor/?tid_code={{v.task_id}}" class="btn btn-info" role="button">Use Code</a>
+                        
                       </div>
                     {% endfor %}
                   {% endif %}
                 </div>
             </div>
         </div>
+
+
+        <div class="modal fade" id="WorkflowModal" role="dialog">
+            <div class="modal-dialog">
+            
+              <!-- Modal content-->
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title">Name Your Workflow</h4>
+                </div>
+                <div class="modal-body">
+                  <form id="myForm" method="post" action="/ui/editor/">
+                    {% csrf_token %}
+                    <input name = "newwfname" value="myWorkflow" id="myField">
+                    <button id="myFormSubmit" type="submit">Submit</button>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+              
+            </div>
+          </div>
 
         <!-- jQuery CDN -->
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
@@ -112,6 +148,20 @@
                     $('#sidebar, #content').toggleClass('active');
                     $('.collapse.in').toggleClass('in');
                     $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+                });
+            });
+            $(document).ready(function(){
+              $('[data-toggle="popover"]').popover({container: 'body'});
+            });
+            $(function(){
+              $('#myFormSubmit').click(function(e){
+                  /*
+                  $.post('http://path/to/post', 
+                    $('#myForm').serialize(), 
+                    function(data, status, xhr){
+                      // do something here with response;
+                    });
+                  */
                 });
             });
             setWorkflowTab();

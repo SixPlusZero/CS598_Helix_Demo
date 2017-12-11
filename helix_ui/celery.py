@@ -22,9 +22,9 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 @app.task(bind=True)
-def training_job(self, workflow, code, comment):
+def training_job(self, workflow, org_code, code, params, comment):
     task_id = training_job.request.id
-    mdb.new_task(task_id, workflow, datetime.datetime.utcnow(), comment, code)
+    mdb.new_task(task_id, workflow, datetime.datetime.utcnow(), comment, params, org_code)
     state = "RUNNING"
     stage = "SUBMIT"
     mdb.update_task_state(task_id, state, stage, 'Code submitted to server.')
@@ -35,11 +35,16 @@ def training_job(self, workflow, code, comment):
     stage = "COMPILECODE"
     mdb.update_task_state(task_id, state, stage, 'Code compiled to helix engine.')
     mdb.get_task_state(task_id)
-    train.run_code()
+    train.run_code(workflow, "logfile.txt")
+    runtime = train.extract_runtime("logfile.txt")
+    accuracy = train.extract_accuracy("logfile.txt")
+    print runtime, accuracy
     stage = "RUNCODE"
     mdb.update_task_state(task_id, state, stage, 'Code executed.')
     state = "SUCCESS"
     stage = "FINISH"
     mdb.update_task_state(task_id, state, stage, 'Task completed.')
     mdb.new_version(task_id)
+    params = {'runtime':runtime,'accuracy':accuracy}
+    mdb.update_version(workflow, task_id, params)
     mdb.get_task_state(task_id)

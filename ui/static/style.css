@@ -176,3 +176,7 @@ a.article, a.article:hover {
         display: none;
     }
 }
+
+.popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}

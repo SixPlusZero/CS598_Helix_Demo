@@ -82,24 +82,45 @@
                 <p>Need to fill out introduction.</p>
 
                 <p>You can write your Helix code here</p>
-                <div class = "row">
-                    <div class = "col-sm-6">
-                        <div class="form-group">
-                            <form action="/ui/editor/" method="POST">
+                
+                <div class="form-group">
+                    <form action="/ui/editor/" method="POST">
+                    {% if paramcnt %}
+                        <input type='hidden' id = 'paramcnt' name = 'paramcnt' value={{paramcnt}} />
+                    {% else %}
+                        <input type='hidden' id = 'paramcnt' name = 'paramcnt' value=0 />
+                    {% endif%}
+                    <div class = "row">
+                        <div class = "col-sm-6">
                             {% csrf_token %}
-                                <label for="mlcode"></label>
                                 <textarea class="form-control" rows="20" name="mlcode" id="mlcode">{% if mlcode %}{{mlcode}}{% endif %}</textarea>
-                                <button type="submit" class="btn btn-primary">Submit</button>
-                            </form>  
-                        </div>            
-                    </div>
-                    <div class = "col-sm-6"></div>
+                                <label for="mlcode"></label>
+                                <input type='hidden' id= 'workflow' name='workflow' value='CensusExample'/>
+
+                        </div>
+                        <div class = "col-sm-6" id = "params">
+                            {% if params %}
+                                {% for key, val in params.items %}
+                                    <div class="input-group">
+                                        <input style="width:50% " class="form-control " value="{{key}}"  name="key{{forloop.counter}}" type="text" />
+                                        <input style="width:50% " class="form-control " value="{{val}}"  name="val{{forloop.counter}}" type="text" />
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div> 
+                    <p></p>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <input onclick = "addKeyVal()" value = "Add Parameter" class="btn btn-primary"/>
+                    </form>
                 </div>
-                <div id = "msgtrain"> 
-                    Task Status
-                    {% if task_id %}
-                        {{task_id}}
-                    {% endif %}
+                <div > 
+                    <p>Task Status</p>
+                    <p id = "msgtrain">
+                        {% if task_id %}
+                            {{task_id}}
+                        {% endif %}
+                    </p>
                 </div>
             </div>
         </div>
@@ -133,8 +154,12 @@
             var task_id = "{{task_id}}";
             console.log(task_id);
             queryProgress();
+            //document.getElementById("msgtrain").focus();
             {% endif %}
 
+            {% if workflow %}
+            document.getElementById("workflow").value = {{workflow}};
+            {% endif %}
             
         </script>
     </body>
